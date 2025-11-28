@@ -2,218 +2,270 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>V3X Eclipse Portal</title>
+<title>v3X Eclipse Portal</title>
 <style>
-/* Переливающийся градиент на фоне */
 body {
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    font-family: 'Segoe UI', sans-serif;
-    background: radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(137,63,217,1) 7%, rgba(90,41,142,1) 9%, rgba(0,0,0,1) 18%, rgba(4,4,192,1) 26%, rgba(5,5,255,1) 14%, rgba(0,0,0,1) 40%, rgba(0,0,0,1) 72%, rgba(0,0,0,1) 100%);
-    background-size: 200% 200%;
-    animation: gradientAnim 10s ease infinite;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
+  margin:0;
+  padding:0;
+  height:100vh;
+  font-family:'Segoe UI',sans-serif;
+  background:#000;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  align-items:center;
+  overflow:hidden;
+  color:#0ff;
 }
 
-@keyframes gradientAnim {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+/* Прогресс загрузки */
+#loader {
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:300px;
+  height:30px;
+  border:2px solid #0ff;
+  border-radius:15px;
+  overflow:hidden;
 }
 
-.loader {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 36px;
-    color: #0ff;
-    text-shadow: 0 0 20px #0ff;
+#progressBar {
+  height:100%;
+  width:0%;
+  background: repeating-linear-gradient(
+    45deg,
+    #0ff,
+    #0ff 5px,
+    #000 5px,
+    #000 10px
+  );
+  animation: pulse 1s infinite alternate;
 }
 
-.container { 
-    display: none; 
-    width: 90%; 
-    max-width: 1200px; 
-    text-align: center; 
-    position: relative; 
+@keyframes pulse {
+  0% { filter: brightness(1); }
+  100% { filter: brightness(1.8); }
 }
 
-/* Настройки слева сверху */
-.settings {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: rgba(17,17,17,0.8);
-    color: #0ff;
-    padding: 15px 25px;
-    border-radius: 10px;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 0 20px #0ff;
-    transition: 0.3s;
-}
-.settings:hover { background: rgba(34,34,34,0.8); }
-
-/* Контейнер кнопок */
-.buttons {
-    margin-top: 120px; /* отступ сверху */
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    flex-wrap: wrap;
+/* Проценты */
+#percent {
+  position:absolute;
+  width:100%;
+  text-align:center;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-weight:bold;
 }
 
-/* Кнопки футуристические, большие */
+/* Loaded текст */
+#loadedText {
+  display:none;
+  font-size:36px;
+  color:#0ff;
+  text-shadow:0 0 10px #fff,0 0 20px #0ff;
+  margin-top:20px;
+  opacity:0;
+  transform:translateY(-50px);
+  transition: all 1s ease;
+}
+
+/* Приветствие */
+#welcome {
+  position:absolute;
+  top:20px;
+  text-align:center;
+  opacity:0;
+  transform:translateY(-50px);
+  transition: all 1s ease;
+}
+
+#welcome h1 {
+  margin:0;
+  font-size:32px;
+}
+
+#welcome h2 {
+  margin:0;
+  font-size:24px;
+  font-weight:normal;
+}
+
+/* Меню */
+#menu {
+  display:none;
+  margin-top:150px;
+  text-align:center;
+  background: rgba(0,0,0,0.7);
+  border-radius:20px;
+  padding:20px 40px;
+  box-shadow:0 0 20px #0ff;
+  opacity:0;
+  transform:translateY(50px);
+  transition: all 1.5s ease;
+}
+
+#menu .buttons {
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
 .btn {
-    background: rgba(17,17,17,0.8);
-    color: #0ff;
-    padding: 25px 50px;
-    font-size: 22px;
-    border-radius: 15px;
-    border: none;
-    cursor: pointer;
-    box-shadow: 0 0 20px #0ff;
-    transition: 0.3s;
-    min-width: 200px;
+  background: rgba(17,17,17,0.8);
+  color:#0ff;
+  padding:15px 30px;
+  border:none;
+  border-radius:15px;
+  font-size:18px;
+  cursor:pointer;
+  box-shadow:0 0 15px #0ff;
+  transition: all 0.3s;
 }
-.btn:hover { transform: scale(1.1); box-shadow: 0 0 35px #0ff; }
 
-.script-box {
-    display: none;
-    margin-top: 20px;
-    background: rgba(17,17,17,0.8);
-    padding: 15px;
-    border-radius: 10px;
-    color: #0ff;
-    font-family: monospace;
-    font-size: 16px;
-    position: relative;
+.btn:hover {
+  transform:scale(1.1);
+  box-shadow:0 0 35px #0ff;
+}
+
+/* Got Script box */
+#scriptBox {
+  display:none;
+  margin-top:15px;
+  background: rgba(0,0,0,0.8);
+  padding:10px;
+  border-radius:10px;
+  position:relative;
+  font-family:monospace;
 }
 
 .copy-btn {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    background:#0ff;
-    color:#000;
-    border:none;
-    padding:5px 10px;
-    cursor:pointer;
-    border-radius:5px;
-    font-weight:bold;
+  position:absolute;
+  right:10px;
+  top:5px;
+  background:#0ff;
+  color:#000;
+  border:none;
+  padding:5px 10px;
+  cursor:pointer;
+  border-radius:5px;
 }
 
-.fade-out { animation: fadeOut 0.5s forwards; }
-@keyframes fadeOut { to { opacity:0; transform:scale(0.8); } }
-
-.error-msg { 
-    color:red; 
-    font-size:16px; 
-    margin-top:10px; 
-    font-weight:bold; 
+.error-msg {
+  color:red;
+  margin-top:10px;
+  display:none;
 }
 </style>
 </head>
 <body>
 
-<div class="loader" id="loader">Loading v3X Portal...</div>
+<!-- Loader -->
+<div id="loader">
+  <div id="progressBar"></div>
+  <div id="percent">0/100%</div>
+</div>
 
-<div class="container" id="mainContainer">
+<!-- Loaded Text -->
+<div id="loadedText">Loaded!</div>
 
-    <button class="settings" id="settingsBtn">Settings</button>
+<!-- Welcome -->
+<div id="welcome">
+  <h1>Hello</h1>
+  <h2>v3x and m3sh</h2>
+  <h2>love's you</h2>
+</div>
 
-    <div class="buttons">
-        <button class="btn" id="discordBtn">Discord</button>
-        <button class="btn" id="gotScriptBtn">Got Script</button>
-        <button class="btn" id="telegramBtn">Telegram (spare)</button>
-        <button class="btn" id="idkBtn">idk</button>
-    </div>
-
-    <div class="script-box" id="scriptBox">
-        <span id="scriptText">loadstring:HTTPGet(".")()</span>
-        <button class="copy-btn" onclick="copyScript()">📎</button>
-    </div>
-
-    <div class="error-msg" id="errorMsg" style="display:none;"></div>
-
+<!-- Menu -->
+<div id="menu">
+  <div class="buttons">
+    <button class="btn" id="discordBtn">Discord</button>
+    <button class="btn" id="telegramBtn">Telegram</button>
+  </div>
+  <button class="btn" id="gotScriptBtn" style="margin-top:15px;">Got the script</button>
+  <div id="scriptBox">
+    <span id="scriptText">loadstring:HTTPGet(".")()</span>
+    <button class="copy-btn" onclick="copyScript()">📎</button>
+  </div>
+  <div class="error-msg" id="errorMsg"></div>
 </div>
 
 <script>
-// Включение/выключение кнопок
-const discordEnabled = false;
-const telegramEnabled = false;
-const idkEnabled = true;
-
-// Прогрузка сайта 4 сек
-setTimeout(() => {
+// Прогресс загрузки
+let progress = 0;
+let loaderInterval = setInterval(() => {
+  progress += Math.floor(Math.random()*5)+1; // +рандом скорость
+  if(progress>100) progress=100;
+  document.getElementById('progressBar').style.width = progress+'%';
+  document.getElementById('percent').innerText = progress+'/100%';
+  if(progress>=100){
+    clearInterval(loaderInterval);
     document.getElementById('loader').style.display='none';
-    document.getElementById('mainContainer').style.display='block';
-}, 4000);
+    // Show Loaded text
+    let loaded = document.getElementById('loadedText');
+    loaded.style.display='block';
+    setTimeout(()=>{
+      loaded.style.opacity=1;
+      loaded.style.transform='translateY(0)';
+    },100);
+    setTimeout(showWelcomeAndMenu,1000);
+  }
+},100);
 
-// Настройка кнопок
-const settingsBtn = document.getElementById('settingsBtn');
-const discordBtn = document.getElementById('discordBtn');
-const telegramBtn = document.getElementById('telegramBtn');
-const idkBtn = document.getElementById('idkBtn');
-const gotScriptBtn = document.getElementById('gotScriptBtn');
-const scriptBox = document.getElementById('scriptBox');
-const errorMsg = document.getElementById('errorMsg');
-
-settingsBtn.onclick = () => alert("Error 401: Недоступно");
-
-// Discord
-discordBtn.onclick = () => {
-    if(discordEnabled){
-        fadeAndRedirect('https://discord.gg/2myNawMhHa');
-    } else showError();
-}
-
-// Telegram
-telegramBtn.onclick = () => {
-    if(telegramEnabled){
-        fadeAndRedirect('https://t.me/spare_link');
-    } else showError();
-}
-
-// idk
-idkBtn.onclick = () => {
-    if(idkEnabled) alert('idk pressed!');
-    else showError();
+// Функция показать приветствие и меню
+function showWelcomeAndMenu(){
+  let welcome = document.getElementById('welcome');
+  let menu = document.getElementById('menu');
+  welcome.style.opacity=1;
+  welcome.style.transform='translateY(0)';
+  menu.style.display='block';
+  setTimeout(()=>{
+    menu.style.opacity=1;
+    menu.style.transform='translateY(0)';
+  },100);
 }
 
 // Got Script
 let scriptVisible = false;
+const gotScriptBtn = document.getElementById('gotScriptBtn');
+const scriptBox = document.getElementById('scriptBox');
 gotScriptBtn.onclick = () => {
-    scriptVisible = !scriptVisible;
-    scriptBox.style.display = scriptVisible ? 'block' : 'none';
-    if(scriptVisible) scriptBox.scrollIntoView({behavior:"smooth"});
+  scriptVisible = !scriptVisible;
+  scriptBox.style.display = scriptVisible ? 'block' : 'none';
 }
 
 // Копирование скрипта
 function copyScript(){
-    const scriptText = document.getElementById('scriptText').innerText;
-    navigator.clipboard.writeText(scriptText)
-        .then(()=>alert('Скрипт скопирован!'))
-        .catch(()=>alert('Ошибка копирования'));
+  const scriptText = document.getElementById('scriptText').innerText;
+  navigator.clipboard.writeText(scriptText)
+    .then(()=>alert('Скрипт скопирован!'))
+    .catch(()=>alert('Ошибка копирования'));
 }
 
-// Анимация исчезания + редирект
-function fadeAndRedirect(url){
-    document.querySelectorAll('.btn').forEach(b => b.classList.add('fade-out'));
-    setTimeout(()=> window.location.href = url, 500);
+// Кнопки Discord/Telegram
+const discordEnabled=false;
+const telegramEnabled=false;
+const discordBtn=document.getElementById('discordBtn');
+const telegramBtn=document.getElementById('telegramBtn');
+const errorMsg=document.getElementById('errorMsg');
+
+discordBtn.onclick = () => {
+  if(discordEnabled) window.location.href='https://discord.gg/2myNawMhHa';
+  else showError();
+}
+telegramBtn.onclick = () => {
+  if(telegramEnabled) window.location.href='https://t.me/spare_link';
+  else showError();
 }
 
-// Показ ошибки
 function showError(){
-    errorMsg.innerText = "This function is not available.\n(Maybe Site/html on update xD)";
-    errorMsg.style.display = 'block';
-    setTimeout(()=>{ errorMsg.style.display='none'; },3000);
+  errorMsg.innerText="This function is not available.\n(Maybe Site/html on update xD)";
+  errorMsg.style.display='block';
+  setTimeout(()=>{errorMsg.style.display='none';},3000);
 }
 </script>
-
 </body>
 </html>
