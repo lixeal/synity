@@ -6,7 +6,7 @@ export default function handler(req, res) {
     // ТВОЙ КОД СКРИПТА ТУТ
     const luaScript = `
         print("Synity Loaded!")
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/lixeal/xllr/refs/heads/rb/synity/version/synity-main.lua"))()
+        print("hello")
     `;
 
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
