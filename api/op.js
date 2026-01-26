@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
   const userAgent = req.headers['user-agent'] || '';
-  const GITHUB_URL = 'https://raw.githubusercontent.com/lixeal/xllr/refs/heads/rb/synity/version/synity-main.lua';
+  const GITHUB_URL = 'https://raw.githubusercontent.com/lixeal/xllr/refs/heads/home/walk.lua';
 
   if (userAgent.includes('Roblox')) {
     try {
